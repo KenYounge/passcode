@@ -64,9 +64,7 @@ Or copy `passcode.py` into your project.
      * Alternatively, you can list those files for exclusion in the `.gitignore` file.
 
 
-  5. Include only the encrypted versions of the protected modules in the repository.
-     
-   `git add *.rc4`  
+  5. Include only the encrypted versions of the protected modules in the repository: `git add *.rc4`  
 
 
   6. Re-run `import_export()` each time you change a protected module.
@@ -79,6 +77,7 @@ Or copy `passcode.py` into your project.
   7. Push your project to the repository. 
     
      * Configure `.gitignore` to exclude your secret module(s) and your secret password key(s) from the repository.
+       
      * And/or make sure that you do not add those files to the repository in the first place.
 
 
@@ -96,23 +95,33 @@ Or copy `passcode.py` into your project.
   9. OPTIONAL: Enable code completion for the development IDE. 
      
      * IDEs will autocomplete and check for some errors when they can reference original code declarations. 
+       
      * The IDE cannot do that, however, if it cannot find a normal Python import statement to reference.
        
      * The following code will enable code completion & inspection on the dev-side IDE. 
+       
      * Note that the code will raise an error on a production machine (because the imports will be missing), 
        so you must catch each error (independently) for each import. 
 
     try: from privatesettings import *   
-    except: pass  #  missing source files will raise an error on the production machine, so catch it
+    except: pass   
 
     try: from privatemethods import *   
     except: pass  
   
   
-  10. OPTIONAL: Recover an original source file (if all you have is the rc4 file)  
+  10. OPTIONAL: Recover an original source file from an rc4 file.
  
-   * You can run `passcode.recover_source()` to recover the source *.py file if you have an encrypted *.rc4 file and 
-     the appropriate key file.
+   * Your original source code is still backed up and protected in the git repository - just not in plain text.
+   
+   * You can recover the original source code (*.py) file from an encrypted *.rc4 file if you have the appropriate key.
+
+   * Run `passcode.recover_source()` to recover the original source code.
+
+
+  11. OPTIONAL: Use `passcode` as a general-purpose utility to encrypt other files in the repo.
+
+   * You can set execute=False in `passcode.import_export()` to encrypt/decrypt other files added to a repo.
 
 
 ## Example

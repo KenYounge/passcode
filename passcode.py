@@ -22,7 +22,7 @@ def __crypt(data, key):
         out.append(chr(ord(char) ^ box[(box[x] + box[y]) % 256]))
     return ''.join(out)
 
-def import_export(name, scope, key_dev='passcode.key', key_run='passcode.key'):
+def import_export(name, scope, key_dev='passcode.key', key_run='passcode.key', execute=True):
     """Encrypt and decrypt a python module.
 
     Args:
@@ -30,6 +30,8 @@ def import_export(name, scope, key_dev='passcode.key', key_run='passcode.key'):
         scope:    scope in which to execute the module --- typically globals() or locals()
         key_dev:  path and name of file containing password on dev machine; otherwise, a string password
         key_run:  path and name of file containing password on runtime production machine; otherwise, a string password
+        execute:  compile and execute the indicated module so that it then appears within the scope.
+                  set execute=False to use passcode as a general-purpose utility to encrypt other files in the repo
 
     Returns:
         AST code object    The return object can then be executed with the python exec() function
