@@ -1,14 +1,13 @@
 # Overview
 
-Use `passcode` to pass python code through a git repository in encrypted form.  
+Use `passcode` to encrypt python modules on your development machine, pass that code through an open git repository, 
+pull the code into production, and then automatically decrypt and run (or reference) the code on the other end. Do all 
+of this automatically, with just two lines of code.
 
-`passcode` is useful when you want to include secrets (such as proprietary code or a login password) in a public 
-repository, and you do not want others to have access to that information. `passcode` encrypts the protected 
-code with a private passphrase, which you can then deploy from your development machine  into production by a more 
-secure means (for example, by accessing the passphrase from an access-controlled metadata server, or by simply
-installing the key in a protected directory within a Docker container).
+`passcode` is useful when you want to include secrets (such as a proprietary method or a login password) directly into 
+your code, but you do not want others to be able to read that information in the push-to-deploy (or backup) repository. 
 
-`passcode`  is written in pure Python 3.X, has no dependencies, and requires two lines of code to implement.
+`passcode`  is written in pure Python 3.X, has no dependencies, and requires two lines of additional code to implement.
 
 
 ## Install
@@ -23,7 +22,7 @@ Or copy `passcode.py` into your project.
 ## Use
   
     import passcode
-    exec(passcode.import_export('private_settings', '~/passcode.key', '/private/passcode.key')) 
+    exec(passcode.import_export('private_settings', locals(), '~/passcode.key', '/private/passcode.key')) 
 
 
 ## Instructions  (step-by-step)
@@ -37,23 +36,21 @@ Or copy `passcode.py` into your project.
 
   2. Create a passphrase.
      
-     * Generate an ASCII passphrase and save it into a file (by default, `passcode.key`).
+     * First option is to generate an ASCII passphrase manually and to thebn save it into a file, such as `passcode.key`
     
-     * If no key file exists, `passcode` will prompt you to enter one and will then save it to `passcode.key`.
+     * Second option is to leave the `key_dev` parameter blank, and `passcode` will prompt you for a passcode.
      
-     * You can use different keys for different modules, to enforce differential access-control.
+     * You can use different keys for different code modules, thereby enforcing differential access-control.
        
 
   3. Import passcode and private modules:
       
-     * The following code first imports passcode
-     * Then the code uses the `passcode.import_export()` function to encrypt, decrypt, and import modules.
-     * The original source code will be imported into the `local` scope.
-     * After running `import_export()` you can reference variables and functions from the indicated modules as normal.
+     * The following code uses the `passcode.import_export()` function to encrypt, decrypt, and import code modules.
+     * The original source code is imported into local scope and you can reference variables and functions as normal.
 
     import passcode 
-    exec(passcode.import_export('private_settings', '~/passcode1.key', '/private/passcode1.key')) 
-    exec(passcode.import_export('private_functions', '~/passcode2.key', '/private/passcode2.key')) 
+    exec(passcode.import_export('private_settings', locals(), '~/passcode1.key', '/private/passcode1.key')) 
+    exec(passcode.import_export('private_functions', locals(), '~/passcode2.key', '/private/passcode2.key')) 
 
   
   4. Exclude the original plaintext files (that you want to secure) from the repository. 
