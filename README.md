@@ -128,14 +128,16 @@ See the file `example_demonstration.py` for a complete example of how to use `pa
 
 ## Tech notes 
  
+
 #### Trust in the production environment
 
 The purpose of `passcode` is to protect secrets while in transit through a git repository. It does NOT necessarily 
 protect secrets in the production environment. Although you can save passcode keys in a protected folder of the
 production environment that most users cannot access, it could be possible for someone with access to the machine to 
-re-write the application to stop, instpect, and dump out the secrets during runtime (of that person had access to the
+re-write the application to stop, inspect, and dump out the secrets during runtime (if that person had access to the
 machine and runtime in order to do so.) We are open to ideas about how to make the runtime production side more secure,
-but `passcode` has generally served it's purpose of keeping secrets out of git repos.
+but this approach has served our own purposes of keeping secrets out of a git repo.
+
 
 #### RC4 Encryption
   
@@ -150,6 +152,7 @@ a very large volume of encrypted traffic. We presume, however, that you will use
 python files, and that those files will change infrequently. As such, you should not generate the millions (or even 
 billions) of examples that are needed for a statistical attack. 
 
+
 #### WARNING
 
 Be sure to set your own passphrase in your own password files. In general, it is better to NOT use the default file 
@@ -158,20 +161,9 @@ Be sure to set your own passphrase in your own password files. In general, it is
 
 ## Version History
 
-Version 2.00 - February 6, 2021 - Python 3.x
+#### Version 0.1.0  -  2021.02.09
 
-  * Renamed from `Security` to `passcode`
-  * Updated for Python 3.x
-  * Decryption stage now returns a compiled code module, allowing for multiline functions and other code.
-  * Readme changed to highlight how to use `passcode` to keep secrets out of your git repository.
-
-Version 1.03 - January 31, 2015 - Python 2.7
-
-  * Restructured the `import` procedure to silently encrypt/decrypt everything with a call to `security.secure()`.
-
-Version 1.00 - January 20, 2015 - Python 2.7 
-
-  * Initial release (named `Security`) for Python 2.7.
+  First distribution to PyPi as `passcode`
 
 
 ## Issues & Bugs
@@ -182,7 +174,7 @@ Version 1.00 - January 20, 2015 - Python 2.7
   * There are some reports of the compile() function failing to parse code due to whitespace within in. TBD.
 
 
-## Disclaimer
+## DISCLAIMER
 
 We use this code to protect simple secrets from general dissemination through our lab. It works well for us. I am 
 posting it here for others to use as a *_pay-it-forward_* to the opensource community, be we provide *no support*, and 
