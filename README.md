@@ -1,38 +1,36 @@
 # Overview
 
-Use `passcode` to encrypt python modules on your development machine, pass that code through an open git repository, 
-pull the code into production, and then automatically decrypt and run (or reference) the code on the other end. Do all 
-of this automatically, with just two lines of code.
+Use `passcode` to encrypt python modules on your development machine, pass the unreadable code through an open git 
+repository, pull the code into production, automatically decrypt the modules on the other end, and run/reference the 
+code in production. Do all of that automatically, with just two lines of code.
 
-`passcode` is useful when you want to include secrets (such as a proprietary method or a login password) directly into 
-your code, but you do not want others to be able to read that information in the push-to-deploy (or backup) repository. 
+`passcode` makes it possible to include secrets (such as a login password or some proprietary code) directly in your
+code without others being able to read it in a push-to-deploy repository. 
 
-`passcode`  is written in pure Python 3.X, has no dependencies, and requires two lines of additional code to implement.
+`passcode`  is written in pure Python 3.X, has no dependencies, and requires two lines of code to implement. You can
+easily inspect and verify the operation of `passcode` to see what it does. 
 
 
 ## Install
 
-Install with pip
+Install with `pip`  
 
     pip install passcode
-
-Or copy `passcode.py` into your project.
-
+    
+Or simply copy `passcode/` directory into your project  
 
 ## Use
   
     import passcode
-    exec(passcode.import_export('private_settings', locals(), '~/passcode.key', '/private/passcode.key')) 
+    passcode.execute('secrets', locals(), '~/mypasscode.key', '/private/mypasscode.key')
 
 
 ## Instructions  (step-by-step)
 
   1. Install passcode.
      
-     * `pip install passcode` into your environment  
+    pip install passcode
        
-     *  or copy `passcode.py` into your project folder.
-
 
   2. Create a passphrase.
      
@@ -45,12 +43,12 @@ Or copy `passcode.py` into your project.
 
   3. Import passcode and private modules:
       
-     * The following code uses the `passcode.import_export()` function to encrypt, decrypt, and import code modules.
+     * The following code uses the `passcode.update()` function to encrypt, decrypt, and import code modules.
      * The original source code is imported into local scope and you can reference variables and functions as normal.
 
     import passcode 
-    exec(passcode.import_export('private_settings', locals(), '~/passcode1.key', '/private/passcode1.key')) 
-    exec(passcode.import_export('private_functions', locals(), '~/passcode2.key', '/private/passcode2.key')) 
+    passcode.execute('secrets1', locals(), '~/passphrase1.key', '/private/passphrase1.key')
+    passcode.execute('secrets1', locals(), '~/passphrase2.key', '/private/passphrase2.key')
 
   
   4. Exclude the original plaintext files (that you want to secure) from the repository. 
@@ -64,11 +62,11 @@ Or copy `passcode.py` into your project.
   5. Include only the encrypted versions of the protected modules in the repository: `git add *.rc4`  
 
 
-  6. Re-run `import_export()` each time you change a protected module.
+  6. Re-run `passcode.execute()` each time you change a passcode protected module.
      
-     * `passcode.import_export()` will refresh the encrypted copy of a module each time it is run.
+     * `passcode.execute()` will refresh the encrypted copy of a module each time it is executed.
        
-     * Therefore re-run `import_export()` each time you change a protected source fie.
+     * Therefore re-run `execute()` each time you change a protected source fie.
        
 
   7. Push your project to the repository. 
@@ -100,10 +98,10 @@ Or copy `passcode.py` into your project.
      * Note that the code will raise an error on a production machine (because the imports will be missing), 
        so you must catch each error (independently) for each import. 
 
-    try: from privatesettings import *   
+    try: from private_code import *   
     except: pass   
 
-    try: from privatemethods import *   
+    try: from another_module import *   
     except: pass  
   
   
@@ -111,73 +109,88 @@ Or copy `passcode.py` into your project.
  
    * Your original source code is still backed up and protected in the git repository - just not in plain text.
    
-   * You can recover the original source code (*.py) file from an encrypted *.rc4 file if you have the appropriate key.
+   * You can recover the original source code (*.py) file from an encrypted *.rc4 file if you have the original key.
 
-   * Run `passcode.recover_source()` to recover the original source code.
-
-
-  11. OPTIONAL: Use `passcode` as a general-purpose utility to encrypt other files in the repo.
-
-   * You can set execute=False in `passcode.import_export()` to encrypt/decrypt other files added to a repo.
+   * Run `passcode.recover()` to recover the original, unencrypted file.
 
 
-## Example
+## Disclaimer
 
-See the file `example_demonstration.py` for a complete example of how to use `passcode`.
+*USE THIS CODE AT YOUR OWN RISK*. I provide *no guarantee* about it's security, safety, reliability, or any other 
+potential risk or harm. 
+ 
+
+## Demonstration
+
+See the file `demonstration.py` for an example of how to use `passcode`.
 
 
 ## Tech notes 
  
 
-#### Trust in the production environment
+#### The production environment
 
-The purpose of `passcode` is to protect secrets while in transit through a git repository. It does NOT necessarily 
-protect secrets in the production environment. Although you can save passcode keys in a protected folder of the
-production environment that most users cannot access, it could be possible for someone with access to the machine to 
-re-write the application to stop, inspect, and dump out the secrets during runtime (if that person had access to the
-machine and runtime in order to do so.) We are open to ideas about how to make the runtime production side more secure,
-but this approach has served our own purposes of keeping secrets out of a git repo.
+The purpose of `passcode` is to protect secrets while in transit through a git repository. It does NOT protect secrets 
+in the production environment. Although you can save passcode keys in an access-protected directory of the production 
+environment (i.e., separate from the running code) that others cannot access, it may be possible for others to access 
+the decryopted code during runtime by re-writing the application to stop, inspect, and dump out the secret code 
+(although they also would have to have permission to change the runtime code in the production environment). This is a 
+limitation of this apporoach. We are open to suggestions from others about ways to strength the last-stage of security
+with other "bring your own encryption key" steps that could be combined with `passcode`.
 
 
 #### RC4 Encryption
   
 Encryption is implemented with the "alleged" RC4 algorithm. Although RC4 is not as secure as AES, it is simple, it is 
 fast, it is implemented in pure python, and it has no imports. Another advantage of RC4 is that you can easily inspect 
-our code and confirm what it does. A more advanced algorithm could require dependencies and/or a more complicated 
-installation and distribution. You can implement `passcode` by doing nothing more than just copying the `passcode.py` 
-file into your project directory.
+our code and confirm what it does. A more advanced algorithm would require dependencies and a more complicated 
+installation/distribution. You can implement `passcode` by doing nothing more than just copying `passcode.py` into
+your project.
 
-There is some concern that RC4 might be breakable under certain conditions -- such as a 'man-in-the-middle' attack over 
-a very large volume of encrypted traffic. We presume, however, that you will use `passcode` to encrypt only a handful of 
-python files, and that those files will change infrequently. As such, you should not generate the millions (or even 
-billions) of examples that are needed for a statistical attack. 
+There is some concern that RC4 is breakable through a 'man-in-the-middle' attack over a very large volume of encrypted 
+traffic. We presume, however, that you will use `passcode` to encrypt only a handful of python files, and that those 
+files change infrequently. As such, you should not generate the millions (or billions) of examples that are needed for 
+a statistical attack. 
 
 
-#### WARNING
+#### Set your own passphrase
 
-Be sure to set your own passphrase in your own password files. In general, it is better to NOT use the default file 
-`passcode.key` file, but rather to generate and name your own file.  
+Be sure to set your own passphrase in your own password files. In general, it is better to NOT use the file name
+`passcode.key` (the default assumed by `passcode.update()`), but rather generate and name your own file. A 
+random file name for your key would also seem to reduce the chance of mistakenly using a key file from somone else. 
 
 
 ## Version History
 
+#### Version 0.1.3  -  2021.02.17
+
+  Moved implementation into a `__init__.py` file so user an import it directly as a directory.
+  Changed naming of the implementation methods.
+  Fixed bug in RC4 which would break on some unicode characters.
+
+#### Version 0.1.2  -  2021.02.11
+
+  Renamed the example files.
+
+#### Version 0.1.1  -  2021.02.10
+
+  Improved the ReadMe.
+
 #### Version 0.1.0  -  2021.02.09
 
-  First distribution to PyPi as `passcode`
+  First distribution to PyPi.
 
 
-## Issues & Bugs
+## OPEN BUG REPORTS
 
-  * It is best to terminate the modules that you aim to encrypt with at least one newline character. This is to 
-    facilitate detection of incomplete and complete statements in the code module.
+  * Terminate modules (that you aim to encrypt) with at least one newline character. This helps python to distinguish 
+    complete vs. incomplete statements in the code module.
     
-  * There are some reports of the compile() function failing to parse code due to whitespace within in. TBD.
+  * There are reports of the python `compile()` function failing to parse some types of code due to whitespace in it. 
+    This is being investigated.
+
+  * There are reports of the our encrypt/decrypt sequence, plus the python `compile()` function, dropping an apostrophe 
+    (i.e., the ' character) - switching to double quotes seemd to fix the problem for some reason in the known case.  
+    This is being investigated.
 
 
-## DISCLAIMER
-
-We use this code to protect simple secrets from general dissemination through our lab. It works well for us. I am 
-posting it here for others to use as a *_pay-it-forward_* to the opensource community, be we provide *no support*, and 
-we provide *no guarantees* about the security, safety, or appriateness of this package. 
-*USE THIS CODE AT YOUR OWN RISK*.
- 
