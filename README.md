@@ -162,7 +162,7 @@ random file name for your key would also seem to reduce the chance of mistakenly
 
 ## Version History
 
-#### Version 0.1.3  -  2021.02.17
+#### Version 0.1.4  -  2021.02.17
 
   Moved implementation into a `__init__.py` file so user an import it directly as a directory.
   Changed naming of the implementation methods.
