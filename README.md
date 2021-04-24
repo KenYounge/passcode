@@ -29,7 +29,7 @@ easily inspect and verify the operation of `passcode` to see what it does.
     passcode.execute('secrets', locals(), '~/mypasscode.key', '/private/mypasscode.key')
 
 
-## Instructions  (step-by-step)
+## Instructions
 
   1. Install passcode.
      
