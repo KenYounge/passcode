@@ -13,13 +13,17 @@ easily inspect and verify the operation of `passcode` to see what it does.
 
 ## Install
 
-Install with `pip`  
+#### Installation
 
-    pip install passcode
-    
-Or simply copy `passcode/` directory into your project  
+  - Install with pip:
+  
+        pip install passcode
 
-## Use
+  - or clone the repository into your own project from GitHub:
+
+        git clone https://github.com/KenYounge/passcode.git
+
+## Usage
   
     import passcode
     passcode.execute('secrets', locals(), '~/mypasscode.key', '/private/mypasscode.key')
