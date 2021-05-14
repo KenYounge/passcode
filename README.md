@@ -1,8 +1,9 @@
 # Overview
 
-Use `passcode` to encrypt python modules on your development machine, pass the unreadable code through an open git 
-repository, pull the code into production, automatically decrypt the modules on the other end, and run/reference the 
-code in production. Do all of that automatically, with just two lines of code.
+`passcode` provides a simple way to encrypt python modules on a development machine, pass the protected code through a 
+public repository, pull the protected code into production, automatically decrypt the protected code at runtime on the 
+production machine, and reference the protected code from other components at runtime. Do all of that with just two 
+lines of code!
 
 `passcode` makes it possible to include secrets (such as a login password or some proprietary code) directly in your
 code without others being able to read it in a push-to-deploy repository. 
